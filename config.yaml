@@ -1,0 +1,26 @@
+# API Gateway 配置文件示例
+# 配置文件路径：项目根目录下的 config.yaml
+
+# 后端服务地址列表（支持多个服务，网关会自动负载均衡）
+services:
+  - "http://localhost:8081"  # 示例服务1
+  - "http://localhost:8082"  # 示例服务2
+
+# 限流配置
+rate_limit: 100  # 每分钟最多允许的请求数
+
+# Redis 配置（用于缓存中间件）
+redis:
+  addr: "localhost:6380"  # Redis 服务器地址
+  password: ""            # Redis 密码（若无密码则留空）
+  db: 0                   # Redis 数据库编号
+
+# JWT 认证配置
+jwt:
+  secret: "your-secret-key"  # JWT 签名密钥（需与认证服务一致）
+  expire: 3600               # Token 有效期（单位：秒，示例为1小时）
+
+# 日志配置
+log:
+  level: "info"              # 日志级别（可选：debug, info, warn, error）
+  file: "logs/gateway.log"   # 日志文件路径（留空则输出到控制台）
