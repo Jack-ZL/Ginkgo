@@ -1,5 +1,6 @@
 package middleware
 
+// LoggerMiddleware 记录请求日志. 使用三方扩展logrus进行日志记录
 import (
 	"github.com/sirupsen/logrus"
 	"net/http"

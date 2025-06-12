@@ -26,13 +26,13 @@ func main() {
 
 	// 添加路由：将请求转发到后端服务
 	g.Router.AddRoute("GET", "/api/v1/resource", func(w http.ResponseWriter, r *http.Request) {
-		service := sd.GetService()
-		if service == nil {
+		getService := sd.GetService()
+		if getService == nil {
 			http.Error(w, "No available services", http.StatusServiceUnavailable)
 			return
 		}
 		// 重定向请求到后端服务
-		http.Redirect(w, r, service.URL+r.URL.Path, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, getService.URL+r.URL.Path, http.StatusTemporaryRedirect)
 	})
 
 	// 应用中间件

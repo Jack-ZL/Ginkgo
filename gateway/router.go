@@ -1,5 +1,7 @@
 package gateway
 
+// Package gateway provides the core functionality for the API gateway, including routing, middleware, and service discovery.
+// use gorilla/mux for routing
 import (
 	"github.com/gorilla/mux"
 	"net/http"

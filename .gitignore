@@ -24,3 +24,5 @@ go.work.sum
 # env file
 .env
 config.yaml
+.idea
+.DS_Store
