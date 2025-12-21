@@ -20,10 +20,13 @@ func ErrorHandler(next http.Handler) http.Handler {
 				log.Printf("Error: %v", err)
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(ErrorResponse{
+				err := json.NewEncoder(w).Encode(ErrorResponse{
 					Code:    http.StatusInternalServerError,
 					Message: "Internal Server Error",
 				})
+				if err != nil {
+					panic(err)
+				}
 			}
 		}()
 		next.ServeHTTP(w, r)

@@ -43,5 +43,8 @@ func main() {
 	g.Use(middleware.ErrorHandler)          // 错误处理
 
 	// 启动网关服务
-	g.Start(":8080")
+	err := g.Start(":8080")
+	if err != nil {
+		panic(err)
+	}
 }
