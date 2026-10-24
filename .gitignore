@@ -26,3 +26,9 @@ go.work.sum
 config.yaml
 .idea
 .DS_Store
+
+# 运行时日志目录（log.file 配置生成）
+logs/
+
+# go build 生成的可执行文件（模块名 ginkgo）
+/ginkgo

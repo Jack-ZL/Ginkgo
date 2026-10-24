@@ -1,26 +1,58 @@
-# API Gateway 配置文件示例
-# 配置文件路径：项目根目录下的 config.yaml
+# Ginkgo API Gateway 配置文件
+# 注意：必须在项目根目录下启动网关（程序从当前目录读取 config.yaml）
 
-# 后端服务地址列表（支持多个服务，网关会自动负载均衡）
+# ===== 网关自身 =====
+server:
+  addr: ":8080"                 # 监听地址（":端口" 或 "IP:端口"）
+
+# ===== 后端服务 =====
+# 后端服务地址列表（网关在它们之间做负载均衡）
 services:
-  - "http://localhost:8081"  # 示例服务1
-  - "http://localhost:8082"  # 示例服务2
+  - "http://localhost:8081"     # 示例服务1
+  - "http://localhost:8082"     # 示例服务2
 
-# 限流配置
-rate_limit: 100  # 每分钟最多允许的请求数
+# 负载均衡策略：round_robin（轮询，默认）/ random（随机）
+load_balance: "round_robin"
 
-# Redis 配置（用于缓存中间件）
+# 健康检查：定期探测后端服务，故障实例自动摘除、恢复后自动加回
+health_check:
+  enabled: true                 # 是否启用
+  interval: 10                  # 探测间隔（秒）
+  timeout: 3                    # 单次探测超时（秒）
+  path: "/healthz"              # 探测路径（后端需对该路径返回 2xx/3xx；没有专用探活接口时可改为 "/"）
+
+# ===== 路由规则（配置驱动，路径前缀匹配）=====
+# path 为前缀：如 "/api/v1" 可匹配 /api/v1、/api/v1/resource、/api/v1/user/42 等
+# methods 为允许的方法列表；留空或不写表示允许所有方法
+routes:
+  - path: "/api/v1/resource"
+    methods: ["GET"]
+  # 再添加一条规则示例（按需取消注释）：
+  # - path: "/api/v2"
+  #   methods: ["GET", "POST"]
+
+# ===== 限流 =====
+# 每个客户端 IP 每分钟最多允许的请求数。
+# Redis 可用时自动使用 Redis 分布式限流（多个网关实例共享计数）；
+# Redis 不可用时自动退化为单机内存限流，不影响网关可用性。
+rate_limit: 100
+
+# ===== Redis（缓存 + 分布式限流）=====
 redis:
-  addr: "localhost:6380"  # Redis 服务器地址
-  password: ""            # Redis 密码（若无密码则留空）
-  db: 0                   # Redis 数据库编号
+  addr: "localhost:6380"        # Redis 服务器地址
+  password: ""                  # Redis 密码（若无密码则留空）
+  db: 0                         # Redis 数据库编号
 
-# JWT 认证配置
+# ===== 响应缓存 =====
+cache:
+  ttl: 600                      # 缓存有效期（秒），默认 600（10 分钟）
+
+# ===== JWT 认证 =====
 jwt:
-  secret: "your-secret-key"  # JWT 签名密钥（需与认证服务一致）
-  expire: 3600               # Token 有效期（单位：秒，示例为1小时）
+  secret: "your-secret-key"     # JWT 签名密钥（需与认证服务一致）
+  expire: 3600                  # Token 有效期（单位：秒，示例为1小时）
 
-# 日志配置
+# ===== 日志 =====
 log:
-  level: "info"              # 日志级别（可选：debug, info, warn, error）
-  file: "logs/gateway.log"   # 日志文件路径（留空则输出到控制台）
+  level: "info"                 # 日志级别（可选：debug, info, warn, error）
+  file: "logs/gateway.log"      # 日志文件路径（留空则输出到控制台）
